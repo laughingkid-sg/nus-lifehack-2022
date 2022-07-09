@@ -4,6 +4,7 @@
     "description": "",
     "main": "app.ts",
     "scripts": {
+        "dev": "nodemon src/app.ts",
         "build": "tsc",
         "start": "nodemon build/app.js",
         "prettier": "npx prettier --write ."
@@ -25,7 +26,7 @@
         "axios": "^0.27.2",
         "cors": "^2.8.5",
         "express": "^4.18.1",
-        "pg": "^8.7.3",
+        "mssql": "^7.3.5",
         "reflect-metadata": "^0.1.13",
         "telegraf": "^4.8.5",
         "typeorm": "^0.3.7"

@@ -19,11 +19,14 @@ export class Item {
     @Column({ type: "text" })
     description: string
 
+    @Column({ type: "text"})
+    cateogry: string
+
     @Column({ type: "int" })
     points: number
 
-    @Column("text", { array: true })
-    productImg: string[]
+    @Column("text")
+    productImg: string
 
     @ManyToOne((type) => Collection, (collection) => collection.items, {
         nullable: false,

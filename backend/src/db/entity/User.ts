@@ -25,7 +25,7 @@ export class User {
     @Column({ type: "varchar", length: 64, nullable: true })
     lastName?: string
 
-    @Column({ type: "varchar" })
+    @Column({ type: "varchar", nullable: true })
     postal: string
 
     @OneToMany((type) => Collection, (collection) => collection.user, {
