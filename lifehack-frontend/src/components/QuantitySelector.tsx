@@ -39,6 +39,7 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 				status: "info",
 				duration: 3000,
 				isClosable: true,
+				position: "top",
 			});
 			return;
 		}
@@ -49,7 +50,7 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 					Collection: { id: cartId },
 					Item: { id: product.id },
 					qty: amount,
-					User: { id: telegram.initDataUnsafe?.id ? telegram.initDataUnsafe.id : 236682617 },
+					User: { telegramId: telegram.initDataUnsafe.user.id },
 				})
 			).data;
 

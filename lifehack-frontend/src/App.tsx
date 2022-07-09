@@ -21,13 +21,13 @@ export const App = () => {
 
 	useEffect(() => {
 		const init = async () => {
-			console.log(process.env.REACT_APP_HOST);
 			// Axios fetch call
+			console.log(telegram.initDataUnsafe.user.id);
 			const { data } = await axios.post("/user", {
-				User: { telegramId: telegram.initDataUnsafe?.id ? telegram.initDataUnsafe.id : 236682617 },
+				User: { telegramId: telegram.initDataUnsafe.user.id },
 			});
 
-			console.log(data);
+			// console.log(data);
 			const { itemsList, collectionList } = data;
 			const products: Item[] = itemsList.map((il: any) => {
 				return {
@@ -56,7 +56,8 @@ export const App = () => {
 
 				return total + ci.qty * product.points;
 			}, 0);
-			alert(telegram.initDataUnsafe.id);
+			alert("Testing testing");
+			console.log(telegram.initDataUnsafe.user.id);
 			app.initShop(products, CATEGORIES);
 			dispatch(setCollectionItems(collectionItems));
 			dispatch(setCollectionId(collectionList.id));

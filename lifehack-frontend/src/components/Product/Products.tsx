@@ -1,5 +1,5 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { Box, Button } from "@chakra-ui/react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PRODUCTS } from "../../dummy";
 import { Item } from "../../types/Item";
@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { hasCollectionItems } from "../../features/collection/collectionSlice";
 import { AppContext } from "../../context/AppContext";
 
+// @ts-ignore
+const telegram = window.Telegram.WebApp;
 function Products() {
 	const navigate = useNavigate();
 	const showMainButton = useSelector(hasCollectionItems);
@@ -58,15 +60,10 @@ function Products() {
 			{showMainButton && (
 				<Box w="100%" position="fixed" bottom={0} backgroundColor="lightgray">
 					<Button w="100%" colorScheme="telegram" onClick={() => navigate("/cart")} size="lg">
-						Go To Cart
+						Schedule a Collection
 					</Button>
 				</Box>
 			)}
-			{/* <Box w="100%" position="fixed" bottom={0} backgroundColor="lightgray">
-				<Button w="100%" colorScheme="telegram" onClick={() => navigate("/cart")} size="lg">
-					Go To Cart
-				</Button>
-			</Box> */}
 		</Box>
 	);
 }

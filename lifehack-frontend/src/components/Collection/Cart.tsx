@@ -42,6 +42,7 @@ function Collection() {
 				status: "error",
 				duration: 5000,
 				isClosable: true,
+				position: "top",
 			});
 			// Send error message to user
 			return;
@@ -147,7 +148,7 @@ function Collection() {
 						You have no items to checkout
 					</Heading>
 					<Button onClick={() => navigate(-1)} colorScheme="green">
-						Go Back
+						Confirm
 					</Button>
 				</Flex>
 			)}
