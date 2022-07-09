@@ -1,0 +1,5 @@
+const welcomeMsg = ``
+
+export {
+    welcomeMsg
+}

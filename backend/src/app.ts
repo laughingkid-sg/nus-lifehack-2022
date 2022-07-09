@@ -20,7 +20,7 @@ routes.map((r) => {
     app.use("/api", r)
 })
 
-app.get('/', (req : Request, res  : Response) => {
+app.get('/', (req: Request, res : Response) => {
     res.send('Hello World!')
   })
 
