@@ -15,6 +15,9 @@ export class CollectionItem {
     @PrimaryGeneratedColumn("uuid")
     id: string
 
+    @Column({type: "int", nullable: false})
+    qty: number
+
     @ManyToOne((type) => Collection, (collection) => collection.collectionItems, { nullable: false })
     collection: Collection
 
