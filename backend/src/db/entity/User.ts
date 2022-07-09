@@ -11,10 +11,10 @@ import { Collection } from "./Collection"
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id?: string
 
     @Column({ type: "bigint", unique: true })
-    telegramId: string
+    telegramId: number
 
     @Column({ type: "varchar", length: 32, unique: true, nullable: true })
     handle?: string
@@ -26,16 +26,16 @@ export class User {
     lastName?: string
 
     @Column({ type: "varchar", nullable: true })
-    postal: string
+    postal?: string
 
     @OneToMany((type) => Collection, (collection) => collection.user, {
-        nullable: false,
+        nullable: true,
     })
-    collections: Collection[]
+    collections?: Collection[]
 
     @CreateDateColumn()
-    createdDate: Date
+    createdDate?: Date
 
     @UpdateDateColumn()
-    updatedDate: Date
+    updatedDate?: Date
 }

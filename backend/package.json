@@ -4,6 +4,7 @@
     "description": "",
     "main": "app.ts",
     "scripts": {
+        "test": "nodemon src/index.ts",
         "dev": "nodemon src/app.ts",
         "build": "tsc",
         "start": "nodemon build/app.js",

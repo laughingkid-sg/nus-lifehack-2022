@@ -4,6 +4,7 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm"
@@ -29,13 +30,11 @@ export class Item {
     @Column("text")
     productImg: string
 
-    @ManyToOne((type) => CollectionItem, (collectionItem) => collectionItem.items, {
-        nullable: false,
-    })
-    collectionItem: CollectionItem
+    @OneToMany(() => CollectionItem, (ci) => ci.item)
+    collectionItems: CollectionItem[];
 
     @CreateDateColumn()
-    createdDate: Date
+    createdDate?: Date
 
     @UpdateDateColumn()
     updatedDate?: Date

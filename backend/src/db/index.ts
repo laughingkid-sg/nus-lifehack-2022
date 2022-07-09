@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm"
-import { entities } from "./entity"
+import { Collection, entities, User, CollectionItem, Item } from "./entity"
 require("dotenv").config()
 
 
@@ -12,7 +12,7 @@ const AppDataSource = new DataSource({
     database: process.env.DATABASE_NAME!,
     synchronize: true,
     logging: true,
-    entities: entities,
+    entities: [User, CollectionItem, Collection, Item],
     subscribers: [],
     migrations: [],
 })
@@ -21,5 +21,24 @@ const DB = async () => {
     return await AppDataSource.initialize()
 }
 
-export { DB }
+const userRepository = () => {
+    return AppDataSource.getRepository(User)
+}
+
+
+const collectionRepository = () => {
+    return AppDataSource.getRepository(Collection)
+}
+
+
+const itemRepository = () => {
+    return AppDataSource.getRepository(Item)
+}
+
+const collectionItemRepository = () => {
+    return AppDataSource.getRepository(CollectionItem)
+}
+
+
+export { DB, userRepository, collectionRepository,  itemRepository, collectionItemRepository, AppDataSource}
 export * from "./entity/index"

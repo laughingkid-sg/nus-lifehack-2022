@@ -1,4 +1,4 @@
-const welcomeMsg = ``
+const welcomeMsg = (firstName : string) => `Hello ${firstName}`
 
 export {
     welcomeMsg

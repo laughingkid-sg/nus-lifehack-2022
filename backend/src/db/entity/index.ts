@@ -5,4 +5,4 @@ import { CollectionItem } from "./CollectionItem"
 
 const entities = [Collection, User, Item, CollectionItem]
 
-export { Collection, User, Item,  CollectionItem, entities }
+export { Collection, User, Item, CollectionItem, entities }

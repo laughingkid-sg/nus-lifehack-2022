@@ -3,7 +3,6 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm"
@@ -21,8 +20,8 @@ export class CollectionItem {
     @ManyToOne((type) => Collection, (collection) => collection.collectionItems, { nullable: false })
     collection: Collection
 
-    @OneToMany((type) => Item, (item) => item.collectionItem)
-    items: Item[]
+    @ManyToOne((type) => Item, (item) => item.collectionItems, { nullable: false })
+    item: Item
 
     @CreateDateColumn()
     createdDate: Date
