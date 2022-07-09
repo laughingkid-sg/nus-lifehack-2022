@@ -1,3 +1,4 @@
+import { CollectionItem } from './CollectionItem';
 import {
     Column,
     CreateDateColumn,
@@ -27,7 +28,7 @@ export class Collection {
     collectionDate: string
 
     @Column({ default: CollectionStatus.PENDING, nullable: false })
-    stauts: CollectionStatus
+    status: CollectionStatus
 
     @Column({ type: "int" })
     pointsAwarded: number
@@ -38,8 +39,8 @@ export class Collection {
     @ManyToOne((type) => User, (user) => user.collections, { nullable: false })
     user: User
 
-    @OneToMany((type) => Item, (item) => item.collection)
-    items: Item[]
+    @OneToMany((type) => CollectionItem, (collectionItem) => collectionItem.collection)
+    collectionItems: CollectionItem[]
 
     @CreateDateColumn()
     createdDate: Date

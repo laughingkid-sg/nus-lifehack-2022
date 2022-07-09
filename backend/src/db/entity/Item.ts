@@ -1,3 +1,4 @@
+import { CollectionItem } from './CollectionItem';
 import {
     Column,
     CreateDateColumn,
@@ -28,10 +29,10 @@ export class Item {
     @Column("text")
     productImg: string
 
-    @ManyToOne((type) => Collection, (collection) => collection.items, {
+    @ManyToOne((type) => CollectionItem, (collectionItem) => collectionItem.items, {
         nullable: false,
     })
-    collection: Collection
+    collectionItem: CollectionItem
 
     @CreateDateColumn()
     createdDate: Date
