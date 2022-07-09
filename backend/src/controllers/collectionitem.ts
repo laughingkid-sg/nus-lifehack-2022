@@ -56,7 +56,6 @@ const removeItemHandler = async (collectionItemId: string, qty: number = 1) => {
         .where("collectionitem.id = :collectionItemId", { collectionItemId })
         .getOne()
 
-    console.log(collectionItem)
     if (collectionItem!.qty <= qty) {
         await AppDataSource.createQueryBuilder()
             .delete()

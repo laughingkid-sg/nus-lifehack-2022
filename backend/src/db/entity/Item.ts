@@ -1,4 +1,4 @@
-import { CollectionItem } from './CollectionItem';
+import { CollectionItem } from "./CollectionItem"
 import {
     Column,
     CreateDateColumn,
@@ -21,7 +21,7 @@ export class Item {
     @Column({ type: "text" })
     description: string
 
-    @Column({ type: "text"})
+    @Column({ type: "text" })
     cateogry: string
 
     @Column({ type: "int" })
@@ -31,7 +31,7 @@ export class Item {
     productImg: string
 
     @OneToMany(() => CollectionItem, (ci) => ci.item)
-    collectionItems: CollectionItem[];
+    collectionItems: CollectionItem[]
 
     @CreateDateColumn()
     createdDate?: Date
