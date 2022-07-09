@@ -2,6 +2,7 @@ import { DB } from "./db"
 import "reflect-metadata"
 import express, { Express, Response, Request } from "express"
 import routes from "./routes"
+import cors from "cors"
 require("dotenv").config()
 
 DB()
@@ -15,6 +16,7 @@ DB()
 const app: Express = express()
 const port = process.env.PORT || 8080
 
+app.use(cors({ origin: true, credentials: true }))
 app.use(express.json())
 
 routes.map((r) => {

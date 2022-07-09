@@ -62,6 +62,10 @@ const removeItemHandler = async (collectionItemId: string, qty: number = 1) => {
             .from(CollectionItem)
             .where("id = :collectionItemId", { collectionItemId })
             .execute()
+        return {
+            id: collectionItemId,
+            qty: 0,
+        }
     } else {
         collectionItem!.qty -= qty
     }

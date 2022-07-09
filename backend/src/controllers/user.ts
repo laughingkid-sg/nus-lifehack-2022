@@ -12,7 +12,7 @@ const initWebApp = async (req: Request, res: Response) => {
 
     if (!collectionList) {
         const result = await collectionRepository()
-            .createQueryBuilder("colleciton")
+            .createQueryBuilder("collection")
             .insert()
             .into(Collection)
             .values({
@@ -35,7 +35,12 @@ const initWebApp = async (req: Request, res: Response) => {
 const closeCollection = async (req: Request, res: Response) => {
     const collectionId = req.body["Collection"]["Id"]
     const date = req.body["Collection"]["Date"]
-    return await confirmCollection(collectionId, date)
+    try {
+        await confirmCollection(collectionId, date)
+        res.status(200).send()
+    } catch (err) {
+        res.status(500).send()
+    }
 }
 
 export { initWebApp, closeCollection }
