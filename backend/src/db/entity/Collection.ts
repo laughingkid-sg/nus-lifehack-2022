@@ -1,4 +1,4 @@
-import { CollectionItem } from './CollectionItem';
+import { CollectionItem } from "./CollectionItem"
 import {
     Column,
     CreateDateColumn,
@@ -37,10 +37,13 @@ export class Collection {
     pointClaimed: number
 
     @ManyToOne((type) => User, (user) => user.collections, { nullable: false })
-    @JoinColumn({referencedColumnName: "telegramId"})
+    @JoinColumn({ referencedColumnName: "telegramId" })
     user: User
 
-    @OneToMany((type) => CollectionItem, (collectionItem) => collectionItem.collection)
+    @OneToMany(
+        (type) => CollectionItem,
+        (collectionItem) => collectionItem.collection,
+    )
     collectionItems?: CollectionItem[]
 
     @CreateDateColumn()
