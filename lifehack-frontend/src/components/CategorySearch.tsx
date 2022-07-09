@@ -8,7 +8,6 @@ type Props = {
 function CategorySearch({ selectedCategories, toggleSelect }: Props) {
 	return (
 		<HStack width="90%" mx="auto" my={2} spacing="16px" overflowX="scroll" shouldWrapChildren>
-			{/* <Flex mx="auto" mb={2}> */}
 			{CATEGORIES.map((c) => (
 				<Tag
 					key={c}
@@ -19,7 +18,6 @@ function CategorySearch({ selectedCategories, toggleSelect }: Props) {
 					<TagLabel>{c}</TagLabel>
 				</Tag>
 			))}
-			{/* </Flex> */}
 		</HStack>
 	);
 }

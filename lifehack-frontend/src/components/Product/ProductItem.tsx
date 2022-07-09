@@ -2,17 +2,17 @@ import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { selectCartItems } from "../../features/cart/cartSlice";
-import { Product } from "../../types/Product";
+import { selectCollectionItems } from "../../features/collection/collectionSlice";
+import { Item } from "../../types/Item";
 import QuantitySelector from "../QuantitySelector";
 
 type Props = {
-	product: Product;
+	product: Item;
 };
 
 function ProductItem({ product }: Props) {
 	const navigate = useNavigate();
-	const cartItem = useSelector(selectCartItems).find((ci) => product.id === ci.itemId);
+	const cartItem = useSelector(selectCollectionItems).find((ci) => product.id === ci.itemId);
 
 	return (
 		<Flex

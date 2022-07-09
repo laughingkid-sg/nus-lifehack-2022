@@ -1,12 +1,12 @@
 import { createContext, ReactNode, useState } from "react";
-import { Product } from "../types/Product";
+import { Item } from "../types/Item";
 import { generateDates } from "../utils/CollectionDates";
 
 interface ContextProps {
-	products: Product[];
+	products: Item[];
 	categories: string[];
 	dateOptions: string[];
-	initShop: (products: Product[], categories: string[]) => void;
+	initShop: (products: Item[], categories: string[]) => void;
 }
 
 interface ProviderProps {
@@ -16,11 +16,11 @@ interface ProviderProps {
 export const AppContext = createContext({} as ContextProps);
 
 const AppContextProvider = ({ children }: ProviderProps) => {
-	const [products, setProducts] = useState<Product[]>([]);
+	const [products, setProducts] = useState<Item[]>([]);
 	const [categories, setCategories] = useState<string[]>([]);
 	const [dateOptions, setDateOptions] = useState<string[]>([]);
 
-	const initShop = (products: Product[], categories: string[]) => {
+	const initShop = (products: Item[], categories: string[]) => {
 		setProducts(products);
 		setCategories(categories);
 		setDateOptions(generateDates());

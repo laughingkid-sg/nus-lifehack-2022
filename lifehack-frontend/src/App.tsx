@@ -3,14 +3,14 @@ import Products from "./components/Product/Products";
 import { Route, Routes } from "react-router-dom";
 import ProductDetail from "./components/Product/ProductDetail";
 import { useEffect, useContext } from "react";
-import Cart from "./components/Cart/Cart";
+import Collection from "./components/Collection/Cart";
 import { AppContext } from "./context/AppContext";
 import { CATEGORIES } from "./dummy";
 import axios from "./helper/axios";
-import { Product } from "./types/Product";
+import { Item } from "./types/Item";
 import { useDispatch } from "react-redux";
-import { setCartId, setCartItems, setPoints } from "./features/cart/cartSlice";
-import { CartItem } from "./types/CartItem";
+import { setCollectionId, setCollectionItems, setPoints } from "./features/collection/collectionSlice";
+import { CollectionItem } from "./types/CollectionItem";
 
 // @ts-ignore
 const telegram = window.Telegram.WebApp;
@@ -29,7 +29,7 @@ export const App = () => {
 
 			console.log(data);
 			const { itemsList, collectionList } = data;
-			const products: Product[] = itemsList.map((il: any) => {
+			const products: Item[] = itemsList.map((il: any) => {
 				return {
 					id: il.id,
 					name: il.name,
@@ -39,7 +39,7 @@ export const App = () => {
 					points: il.points,
 				};
 			});
-			const cartItems: CartItem[] = collectionList.collectionItems.map((ci: any) => {
+			const collectionItems: CollectionItem[] = collectionList.collectionItems.map((ci: any) => {
 				return {
 					id: ci.id,
 					quantity: ci.qty,
@@ -47,7 +47,6 @@ export const App = () => {
 				};
 			});
 
-			console.log(products);
 			const points = collectionList.collectionItems.reduce((total: number, ci: any) => {
 				const product = products.find((il) => il.id === ci.item.id);
 
@@ -55,13 +54,12 @@ export const App = () => {
 					return total;
 				}
 
-				console.log(product);
 				return total + ci.qty * product.points;
 			}, 0);
-			console.log(points);
+			alert(telegram.initDataUnsafe.id);
 			app.initShop(products, CATEGORIES);
-			dispatch(setCartItems(cartItems));
-			dispatch(setCartId(collectionList.id));
+			dispatch(setCollectionItems(collectionItems));
+			dispatch(setCollectionId(collectionList.id));
 			dispatch(setPoints(points));
 		};
 
@@ -75,7 +73,7 @@ export const App = () => {
 			<Box>
 				<Routes>
 					<Route path="/product/:id" element={<ProductDetail />} />
-					<Route path="/cart" element={<Cart />} />
+					<Route path="/cart" element={<Collection />} />
 					<Route path="/" element={<Products />} />
 				</Routes>
 			</Box>

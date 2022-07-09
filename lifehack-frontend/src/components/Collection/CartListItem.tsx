@@ -1,19 +1,17 @@
-import { Flex, Checkbox, VStack, SimpleGrid, Text, Image, Box, Button } from "@chakra-ui/react";
+import { Flex, VStack, SimpleGrid, Text, Image, Button } from "@chakra-ui/react";
 import axios from "../../helper/axios";
-import React, { useContext } from "react";
-import { FaTrash } from "react-icons/fa";
+import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
-import { PRODUCTS } from "../../dummy";
-import { CartItem, ResponseCartItem } from "../../types/CartItem";
+import { CollectionItem } from "../../types/CollectionItem";
 import QuantitySelector from "../QuantitySelector";
 import { useDispatch } from "react-redux";
-import { deleteCartItem, reducePoints } from "../../features/cart/cartSlice";
+import { deleteCollectionItem, reducePoints } from "../../features/collection/collectionSlice";
 
 type Props = {
-	cartItem: CartItem;
+	cartItem: CollectionItem;
 };
 
-function CartListItem({ cartItem }: Props) {
+function CollectionListItem({ cartItem }: Props) {
 	const dispatch = useDispatch();
 	const { products } = useContext(AppContext);
 	const product = products.find((p) => p.id === cartItem.itemId);
@@ -22,14 +20,16 @@ function CartListItem({ cartItem }: Props) {
 		return null;
 	}
 
-	const deleteItemHandler = async () => {
-		const deletedItem: ResponseCartItem = await axios.post("/remove", {
-			CollectionItem: { id: cartItem.id },
-			qty: cartItem.quantity,
-		});
-
-		dispatch(deleteCartItem(deletedItem.id));
-		dispatch(reducePoints(product.points * cartItem.quantity));
+	const deleteItemHandler = () => {
+		axios
+			.post("/remove", {
+				CollectionItem: { id: cartItem.id },
+				qty: cartItem.quantity,
+			})
+			.then(() => {
+				dispatch(deleteCollectionItem(cartItem.id));
+				dispatch(reducePoints(product.points * cartItem.quantity));
+			});
 	};
 
 	return (
@@ -50,4 +50,4 @@ function CartListItem({ cartItem }: Props) {
 	);
 }
 
-export default CartListItem;
+export default CollectionListItem;

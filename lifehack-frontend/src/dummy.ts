@@ -1,6 +1,6 @@
-import { Product } from "./types/Product";
+import { Item } from "./types/Item";
 
-const PRODUCTS: Product[] = [
+const PRODUCTS: Item[] = [
 	{
 		id: "c2e0f86e-6594-467e-b703-94832042036a",
 		name: "General Paper Waste",

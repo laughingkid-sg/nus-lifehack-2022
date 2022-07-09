@@ -2,22 +2,22 @@ import { Box, Button, Flex } from "@chakra-ui/react";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PRODUCTS } from "../../dummy";
-import { Product } from "../../types/Product";
+import { Item } from "../../types/Item";
 import CategorySearch from "../CategorySearch";
 import ProductList from "./ProductList";
 import SearchBar from "../SearchBar";
 import { useSelector } from "react-redux";
-import { hasCartItems } from "../../features/cart/cartSlice";
+import { hasCollectionItems } from "../../features/collection/collectionSlice";
 import { AppContext } from "../../context/AppContext";
 
 function Products() {
 	const navigate = useNavigate();
-	const showMainButton = useSelector(hasCartItems);
+	const showMainButton = useSelector(hasCollectionItems);
 	const { products, categories } = useContext(AppContext);
 
 	const [keywordSearch, setKeywordSearch] = useState<string>("");
 	const [categorySearch, setCategorySearch] = useState<string[]>([]);
-	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+	const [filteredProducts, setFilteredProducts] = useState<Item[]>(products);
 
 	useEffect(() => {
 		if (products.length === 0 || (keywordSearch === "" && categorySearch.length === 0)) {

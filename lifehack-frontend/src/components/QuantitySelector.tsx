@@ -1,22 +1,22 @@
-import { Flex, IconButton, NumberInput, NumberInputField } from "@chakra-ui/react";
+import { Flex, IconButton, NumberInput, NumberInputField, useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	addCartItem,
+	addCollectionItem,
 	addPoints,
-	deleteCartItem,
+	deleteCollectionItem,
 	reducePoints,
-	selectCartId,
-	updateCartItem,
-} from "../features/cart/cartSlice";
+	selectCollectionId,
+	updateCollectionItem,
+} from "../features/collection/collectionSlice";
 import axios from "../helper/axios";
-import { CartItem, ResponseCartItem } from "../types/CartItem";
-import { Product } from "../types/Product";
+import { CollectionItem, ResponseCollectionItem } from "../types/CollectionItem";
+import { Item } from "../types/Item";
 
 interface Props {
-	cartItem: CartItem | undefined;
-	product: Product;
+	cartItem: CollectionItem | undefined;
+	product: Item;
 	size?: "md" | "sm" | "xs";
 }
 
@@ -25,19 +25,26 @@ const telegram = window.Telegram.WebApp;
 
 function QuantitySelector({ product, cartItem, size }: Props) {
 	const dispatch = useDispatch();
-	const cartId = useSelector(selectCartId);
+	const toast = useToast();
+	const cartId = useSelector(selectCollectionId);
 	// TODO Update
 	const [quantity, setQuantity] = useState<number>(cartItem ? cartItem.quantity : 0);
 	const [fieldQty, setFieldQty] = useState<string>(quantity.toString());
 
 	const changeQuantityHandler = async (amount: number) => {
-		// No difference in value
-		if (amount === 0) {
+		// No difference in value or user tries to make product negative
+		if (amount === 0 || amount + quantity < 0) {
+			toast({
+				title: "No changes made.",
+				status: "info",
+				duration: 3000,
+				isClosable: true,
+			});
 			return;
 		}
 
 		if (!cartItem || amount > 0) {
-			const addItem: ResponseCartItem = (
+			const addItem: ResponseCollectionItem = (
 				await axios.post("/add", {
 					Collection: { id: cartId },
 					Item: { id: product.id },
@@ -49,7 +56,7 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 			if (!cartItem) {
 				console.log("Create cartItem");
 				dispatch(
-					addCartItem({
+					addCollectionItem({
 						id: addItem.id,
 						itemId: product.id,
 						quantity: amount,
@@ -57,13 +64,13 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 				);
 			} else {
 				const newCartItem = { ...cartItem, quantity: addItem.qty };
-				dispatch(updateCartItem(newCartItem));
+				dispatch(updateCollectionItem(newCartItem));
 			}
 			dispatch(addPoints(product.points * amount));
 			setQuantity(addItem.qty);
 			setFieldQty(addItem.qty.toString());
 		} else {
-			const removeItem: ResponseCartItem = (
+			const removeItem: ResponseCollectionItem = (
 				await axios.post("/remove", {
 					CollectionItem: { id: cartItem.id },
 					qty: Math.abs(amount),
@@ -71,9 +78,9 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 			).data;
 
 			if (removeItem.qty === 0) {
-				dispatch(deleteCartItem(removeItem.id));
+				dispatch(deleteCollectionItem(removeItem.id));
 			} else {
-				dispatch(updateCartItem({ ...cartItem, quantity: removeItem.qty }));
+				dispatch(updateCollectionItem({ ...cartItem, quantity: removeItem.qty }));
 			}
 
 			console.log(removeItem.qty);
