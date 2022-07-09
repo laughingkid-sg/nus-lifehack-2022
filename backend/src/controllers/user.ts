@@ -2,7 +2,7 @@ import { Collection } from './../db/entity/Collection';
 
 import { Request, Response } from "express"
 import { collectionRepository } from "../db";
-import { getCollectionHandler } from "./collection";
+import { confirmCollection, getCollectionHandler } from "./collection";
 import { getItemsHandler } from "./item"
 
 const initWebApp = async (req: Request, res: Response) => {
@@ -32,6 +32,13 @@ const initWebApp = async (req: Request, res: Response) => {
     return res.json({ itemsList, collectionList })
 }
 
+const closeCollection = async (req: Request, res: Response) => {
+    const collectionId = req.body["Collection"]["Id"]
+    const date = req.body["Collection"]["Date"]
+    return await confirmCollection(collectionId, date);
+}
+
 export {
-    initWebApp
+    initWebApp,
+    closeCollection
 }

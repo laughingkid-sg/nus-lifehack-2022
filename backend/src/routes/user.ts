@@ -1,8 +1,9 @@
 import express from "express"
-import { initWebApp } from "../controllers"
+import { closeCollection, initWebApp } from "../controllers"
 
 const router = express.Router()
 
 router.post(`/user`, initWebApp)
+router.post(`/schedule`, closeCollection)
 
 export default router

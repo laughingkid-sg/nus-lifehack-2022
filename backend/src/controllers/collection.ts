@@ -1,3 +1,4 @@
+import { Collection } from './../db/entity/Collection';
 import { collectionRepository } from "../db"
 import { CollectionStatus } from "../db/entity/Collection"
 
@@ -17,6 +18,20 @@ const getCollectionHandler = async (telegramId: number) => {
         // Returning everything for simplicity
 }
 
+const confirmCollection = async (collectionId : string, date: string) => {
+    return collectionRepository()
+    .createQueryBuilder("collection")
+    .update(Collection)
+    .set({
+        collectionDate: date,
+        status: CollectionStatus.SCHEDULED
+    })
+    .where (
+        "id = :collectionId", {collectionId}
+    ).execute()
+}
+
 export {
-    getCollectionHandler
+    getCollectionHandler,
+    confirmCollection
 }

@@ -1,24 +1,23 @@
+import { DataSource } from 'typeorm';
 import { CollectionItem } from './../db/entity/CollectionItem';
 
 import { Request, Response } from "express"
-import { collectionItemRepository, collectionRepository } from "../db"
+import { AppDataSource, collectionItemRepository, collectionRepository } from "../db"
 
 const addItemHandler = async (collectionId: string, itemId: string, qty : number = 1, telegramId: string) => {
     let itemExistInCollection = await collectionItemRepository()
         .createQueryBuilder("collectionitem")
-        // .innerJoinAndSelect("collectionitem.collectionId", "collection")
-        // .where("collection.id = :collectionId", { collectionId })
+        .innerJoinAndSelect("collectionitem.collection", "collection")
+        .where("collection.id = :collectionId", { collectionId })
         .andWhere("collectionitem.itemId = :itemId", {itemId})
         .select(["collectionitem.id", "collectionitem.qty"])
         .getOne();
 
     if (itemExistInCollection) {
         itemExistInCollection.qty += qty;
-        console.log(itemExistInCollection.qty)
         await collectionItemRepository().save(itemExistInCollection)
         return {
             id: itemExistInCollection.id,
-            item: itemExistInCollection.item.id,
             qty: itemExistInCollection.qty
         }
     }  else {
@@ -31,28 +30,54 @@ const addItemHandler = async (collectionId: string, itemId: string, qty : number
                 collection: {id : collectionId},
                 qty: qty,
             })
-            .returning(["id", "qty", "itemId"])
+            .returning(["id", "qty", "item"])
             .execute()
+        console.log(newCartItem)
         return {
             id: newCartItem.raw[0].id,
-            item: newCartItem.raw[0].item.id,
+            item: newCartItem.raw[0].item,
             qty: qty
         }
     }
 }
 
+const removeItemHandler = async (collectionItemId: string, qty : number = 1) => {
+    const collectionItem = await collectionItemRepository()
+        .createQueryBuilder("collectionitem")
+        .where("collectionitem.id = :collectionItemId", {collectionItemId})
+        .getOne()
+
+        if (collectionItem!.qty <= qty) {
+            await AppDataSource.createQueryBuilder().delete().from(CollectionItem).where("id = :collectionItemId", {collectionItemId}).execute()
+        } else {
+            collectionItem!.qty -= qty
+        }
+        await collectionItemRepository().save(collectionItem!)
+        return {
+            id: collectionItem?.id,
+            qty: collectionItem?.qty
+        }
+}
+
 const addItem = async (req: Request, res: Response) => {
     const collectionId = req.body['Collection']['id']
     const itemId = req.body['Item']['id']
-    const qty = req.body['Item']
+    const qty = req.body['qty']
     const telegramId = req.body['User']['id']
-    return addItemHandler(collectionId, itemId, qty, telegramId)
+    return res.json(await addItemHandler(collectionId, itemId, qty, telegramId));
 }
 
-const removeItme = async (req: Request, res: Response) => {
-
+const removeItem = async (req: Request, res: Response) => {
+    try {
+        const collectionId = req.body['CollectionItem']['id']
+    const qty = req.body['qty']
+    return res.json(await removeItemHandler(collectionId, qty));
+    } catch (err) {
+        return res.status(400).send()
+    }
 }
 
 export {
-    addItem
+    addItem,
+    removeItem
 }
