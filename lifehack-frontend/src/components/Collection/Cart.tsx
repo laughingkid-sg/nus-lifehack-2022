@@ -1,33 +1,32 @@
-import { Flex, Button, Alert, Text, VStack, Select, AlertIcon, Heading, Divider } from "@chakra-ui/react";
+import { Flex, Button, Alert, Text, VStack, Select, AlertIcon, Heading, Divider, useToast } from "@chakra-ui/react";
 import axios from "../../helper/axios";
 import React, { useContext } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import {
-	hasCartItems,
-	selectCartId,
-	selectCartItems,
+	selectCollectionId,
+	selectCollectionItems,
 	selectCollectionDate,
 	selectTotalPoints,
 	setSelectedDateTime,
-} from "../../features/cart/cartSlice";
-import CartListItem from "./CartListItem";
+} from "../../features/collection/collectionSlice";
+import CollectionListItem from "./CartListItem";
 
 // @ts-ignore
 const telegram = window.Telegram.WebApp;
 
-function Cart() {
+function Collection() {
 	const navigate = useNavigate();
 	const app = useContext(AppContext);
 	const dispatch = useDispatch();
+	const toast = useToast();
 
-	const cartId = useSelector(selectCartId);
-	const cartItems = useSelector(selectCartItems, shallowEqual);
+	const collectionId = useSelector(selectCollectionId);
+	const collectionItems = useSelector(selectCollectionItems, shallowEqual);
 	const points = useSelector(selectTotalPoints);
 	const dateTime = useSelector(selectCollectionDate);
-	const itemsInCart = useSelector(hasCartItems);
 
 	const dateInRange = dateTime ? app.dateOptions.find((dOpt) => dOpt === dateTime) : true;
 
@@ -37,13 +36,20 @@ function Cart() {
 
 	const checkoutItemsHandler = () => {
 		if (!dateTime) {
+			toast({
+				title: "Error",
+				description: "Remember to enter a timeslot before checking out",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
 			// Send error message to user
 			return;
 		}
 
 		axios
 			.post("/schedule", {
-				Collection: { id: cartId, date: dateTime },
+				Collection: { id: collectionId, date: dateTime },
 			})
 			.then(() => {
 				telegram.close();
@@ -69,7 +75,7 @@ function Cart() {
 				</Button>
 				<Heading ml={2}>Your Items</Heading>
 			</Flex>
-			{itemsInCart ? (
+			{collectionItems.length > 0 ? (
 				<Flex
 					direction="column"
 					mb={5}
@@ -80,8 +86,8 @@ function Cart() {
 					mx="auto"
 				>
 					<VStack spacing="8px" alignSelf="flex-start" mt={6}>
-						{cartItems.map((ci) => (
-							<CartListItem key={ci.id} cartItem={ci} />
+						{collectionItems.map((ci) => (
+							<CollectionListItem key={ci.id} cartItem={ci} />
 						))}
 					</VStack>
 					<Divider my={6} />
@@ -149,4 +155,4 @@ function Cart() {
 	);
 }
 
-export default Cart;
+export default Collection;

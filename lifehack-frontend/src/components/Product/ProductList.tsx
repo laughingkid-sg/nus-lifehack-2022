@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { Product } from "../../types/Product";
+import { Item } from "../../types/Item";
 import ProductItem from "./ProductItem";
 
 type Props = {
-	products: Product[];
+	products: Item[];
 };
 
 function ProductList({ products }: Props) {

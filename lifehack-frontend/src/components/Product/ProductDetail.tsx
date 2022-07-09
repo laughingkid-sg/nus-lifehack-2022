@@ -7,8 +7,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import axios from "../../helper/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { addCartItem, addPoints, selectCartId, selectCartItems, updateCartItem } from "../../features/cart/cartSlice";
-import { ResponseCartItem } from "../../types/CartItem";
+import {
+	addCollectionItem,
+	addPoints,
+	selectCollectionId,
+	selectCollectionItems,
+	updateCollectionItem,
+} from "../../features/collection/collectionSlice";
+import { ResponseCollectionItem } from "../../types/CollectionItem";
 
 // @ts-ignore
 const telegram = window.Telegram.WebApp;
@@ -21,8 +27,8 @@ function ProductDetail() {
 
 	const [quantity, setQuantity] = useState(0);
 
-	const cartId = useSelector(selectCartId);
-	const cartItem = useSelector(selectCartItems).find((ci) => ci.itemId === id);
+	const cartId = useSelector(selectCollectionId);
+	const cartItem = useSelector(selectCollectionItems).find((ci) => ci.itemId === id);
 
 	const product = products.find((p) => id === p.id);
 
@@ -45,7 +51,7 @@ function ProductDetail() {
 			return;
 		}
 
-		const addItem: ResponseCartItem = (
+		const addItem: ResponseCollectionItem = (
 			await axios.post("/add", {
 				Collection: { id: cartId },
 				Item: { id: product.id },
@@ -55,9 +61,9 @@ function ProductDetail() {
 		).data;
 
 		if (cartItem) {
-			dispatch(updateCartItem({ ...cartItem, quantity: addItem.qty }));
+			dispatch(updateCollectionItem({ ...cartItem, quantity: addItem.qty }));
 		} else {
-			dispatch(addCartItem({ id: addItem.id, itemId: product.id, quantity: addItem.qty }));
+			dispatch(addCollectionItem({ id: addItem.id, itemId: product.id, quantity: addItem.qty }));
 		}
 		dispatch(addPoints(product.points * quantity));
 		setQuantity(0);
