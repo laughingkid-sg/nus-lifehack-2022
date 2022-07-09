@@ -16,13 +16,18 @@ export class Item {
     @Column({ type: "varchar", length: 32 })
     name: string
 
-    @Column()
+    @Column({ type: "text" })
     description: string
+
+    @Column({ type: "int" })
+    points: number
 
     @Column("text", { array: true })
     productImg: string[]
 
-    @ManyToOne((type) => Collection, (collection) => collection.items, { nullable: false })
+    @ManyToOne((type) => Collection, (collection) => collection.items, {
+        nullable: false,
+    })
     collection: Collection
 
     @CreateDateColumn()

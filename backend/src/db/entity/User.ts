@@ -28,7 +28,9 @@ export class User {
     @Column({ type: "varchar" })
     postal: string
 
-    @OneToMany((type) => Collection, (collection) => collection.user, { nullable: false })
+    @OneToMany((type) => Collection, (collection) => collection.user, {
+        nullable: false,
+    })
     collections: Collection[]
 
     @CreateDateColumn()
