@@ -13,7 +13,7 @@ Learn more about each of the feature using the buttons below.
 
 const postalUpdated = `Your postal code have been updated!`
 
-const doorstepCollection  = `Have you seen flyers for doorstep collection for recyclables? 📝 
+const doorstepCollection = `Have you seen flyers for doorstep collection for recyclables? 📝 
 
 Well, we are improving it. From now on you will recieve reminders <b>1 week, 3 days and 1 day</b> before the collection 📅
 
@@ -41,4 +41,11 @@ const collection = `Use the 'Book a Collection' button to start out app which wi
 
 Our team will be conducting door-to-door collection for your recycables. Let them know your collection Id to earn your points.`
 
-export { welcomeMsg, postalUpdated, doorstepCollection, guidelienes, canRecycle, collection}
+export {
+    welcomeMsg,
+    postalUpdated,
+    doorstepCollection,
+    guidelienes,
+    canRecycle,
+    collection,
+}

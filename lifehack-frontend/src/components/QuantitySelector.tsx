@@ -50,7 +50,10 @@ function QuantitySelector({ product, cartItem, size }: Props) {
 					Collection: { id: cartId },
 					Item: { id: product.id },
 					qty: amount,
-					User: { telegramId: telegram.initDataUnsafe.user.id },
+					// User: { telegramId: telegram.initDataUnsafe.user.id },
+					User: {
+						telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+					},
 				})
 			).data;
 

@@ -19,7 +19,7 @@ const getCollectionHandler = async (telegramId: number) => {
 }
 
 const confirmCollection = async (collectionId: string, date: string) => {
-    return collectionRepository()
+    return await collectionRepository()
         .createQueryBuilder("collection")
         .update(Collection)
         .set({

@@ -4,7 +4,12 @@ import { Markup, Telegraf, Context as TelegramContext } from "telegraf"
 import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram"
 import { ExtraReplyMessage } from "telegraf/typings/telegram-types"
 import { neaList } from "../data"
-import { AppDataSource, User, userRepository } from "../db"
+import {
+    AppDataSource,
+    collectionRepository,
+    User,
+    userRepository,
+} from "../db"
 import { postalUpdated, welcomeMsg, invalidPostal } from "../templates"
 require("dotenv").config()
 
@@ -91,33 +96,34 @@ bot.start(async (ctx) => {
     }
     await createUser(user)
 
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "♻️ Doorstep Collection",
-                    callback_data: "QAZ"
-                },              
+                    callback_data: "QAZ",
+                },
             ],
             [
                 {
                     text: "♻️ Check if item recycleable",
-                    callback_data: "EDC"
-                },              
+                    callback_data: "EDC",
+                },
             ],
             [
                 {
                     text: "♻️ Schedule Collection",
-                    callback_data: "RFV"
-                },              
-            ]              
-        ]
+                    callback_data: "RFV",
+                },
+            ],
+        ],
     }
-   
-    
+
     addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
-    
+
     ctx.reply(welcomeMsg(user.firstName), addtionalSettings)
 })
 
@@ -146,7 +152,24 @@ bot.command("about", async (ctx) => {})
 
 bot.command("guidelines", async (ctx) => {})
 
-bot.command("points", async (ctx) => {})
+bot.command("points", async (ctx) => {
+    const collections = await collectionRepository()
+        .createQueryBuilder()
+        .where("userTelegramId = :telegramId", {
+            telegramId: ctx.message.from.id,
+        })
+        .getMany()
+
+    const totalPoints = collections.reduce((total, coll) => {
+        const awarded = coll.pointsAwarded ? coll.pointsAwarded : 0
+        const claimed = coll.pointClaimed ? coll.pointClaimed : 0
+
+        return total + (awarded - claimed)
+    }, 0)
+
+    const finalMessage = `You current have ${totalPoints} points!`
+    ctx.reply(finalMessage)
+})
 
 bot.command("collections", async (ctx) => {})
 
@@ -181,10 +204,13 @@ const telegraf = async (req: Request, res: Response) => {
 }
 
 const confirmationMessage = async (req: Request, res: Response) => {
-    const telegramId =  req.body['User']['telegramId']
-    const collectionId  = req.body['Collection']['collectionDate']
-    const date  = req.body['Collection']['id']
-    bot.telegram.sendMessage(telegramId, `Thank you for scheduling a collection with us on ${date}. Your collection id is ${collectionId}`)
+    const telegramId = req.body["User"]["telegramId"]
+    const collectionId = req.body["Collection"]["collectionDate"]
+    const date = req.body["Collection"]["id"]
+    bot.telegram.sendMessage(
+        telegramId,
+        `Thank you for scheduling a collection with us on ${date}. Your collection id is ${collectionId}`,
+    )
 }
 
 export { telegraf, confirmationMessage }

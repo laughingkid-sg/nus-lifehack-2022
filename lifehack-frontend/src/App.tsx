@@ -1,15 +1,16 @@
 import { ChakraProvider, Box, theme } from "@chakra-ui/react";
-import Products from "./components/Product/Products";
+import { useEffect, useContext, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router-dom";
+
+import Products from "./components/Product/Products";
 import ProductDetail from "./components/Product/ProductDetail";
-import { useEffect, useContext } from "react";
-import Collection from "./components/Collection/Cart";
+import Collection from "./components/Collection/Collection";
 import { AppContext } from "./context/AppContext";
 import { CATEGORIES } from "./dummy";
+import { setCollectionId, setCollectionItems, setPoints } from "./features/collection/collectionSlice";
 import axios from "./helper/axios";
 import { Item } from "./types/Item";
-import { useDispatch } from "react-redux";
-import { setCollectionId, setCollectionItems, setPoints } from "./features/collection/collectionSlice";
 import { CollectionItem } from "./types/CollectionItem";
 
 // @ts-ignore
@@ -18,13 +19,15 @@ const telegram = window.Telegram.WebApp;
 export const App = () => {
 	const app = useContext(AppContext);
 	const dispatch = useDispatch();
+	const [isInitialised, setIsInitialised] = useState(false);
 
 	useEffect(() => {
 		const init = async () => {
 			// Axios fetch call
 			// console.log(telegram.initDataUnsafe.user.id);
 			const { data } = await axios.post("/user", {
-				User: { telegramId: telegram.initDataUnsafe.user.id },
+				// User: { telegramId: telegram.initDataUnsafe.user.id },
+				User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
 			});
 
 			// console.log(data);
@@ -56,16 +59,18 @@ export const App = () => {
 
 				return total + ci.qty * product.points;
 			}, 0);
-			// alert("Testing testing");
-			// console.log(telegram.initDataUnsafe.user.id);
 			app.initShop(products, CATEGORIES);
 			dispatch(setCollectionItems(collectionItems));
 			dispatch(setCollectionId(collectionList.id));
 			dispatch(setPoints(points));
+			setIsInitialised(true);
+			telegram.expand();
 		};
 
-		init();
-	}, []);
+		if (!isInitialised) {
+			init();
+		}
+	}, [isInitialised, app, dispatch]);
 
 	return (
 		<ChakraProvider theme={theme}>
