@@ -1,7 +1,6 @@
 import { Box, Button } from "@chakra-ui/react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PRODUCTS } from "../../dummy";
 import { Item } from "../../types/Item";
 import CategorySearch from "../CategorySearch";
 import ProductList from "./ProductList";
@@ -27,7 +26,7 @@ function Products() {
 			return;
 		}
 
-		let newFiltered = PRODUCTS;
+		let newFiltered = products;
 
 		if (categorySearch.length > 0) {
 			newFiltered = newFiltered.filter((p) => categorySearch.includes(p.category));
