@@ -171,7 +171,7 @@ bot.on('callback_query', (ctx) => {
     const cbData = ctx.callbackQuery.data
     switch (cbData) {
         case "QAZ":
-            ctx.replyWithPhoto("https://katokatoproduction.blob.core.windows.net/product-images/sample-flyer.jpg",  {
+            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!,  {
                 caption: doorstepCollection,  
                 ...messageSettings
             })
