@@ -72,9 +72,10 @@ function Collection() {
 			})
 			.then(async () => {
 				await axios.post("/telegraf/confirm", {
-					User: {
-						telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
-					},
+					// User: {
+					// 	telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+					// },
+					User: { telegramId: telegram.initDataUnsafe.user.id },
 					Collection: { id: collectionId, collectionDate: dateTime },
 				});
 				console.log("Done");

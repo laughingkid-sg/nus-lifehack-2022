@@ -26,8 +26,8 @@ export const App = () => {
 			// Axios fetch call
 			// console.log(telegram.initDataUnsafe.user.id);
 			const { data } = await axios.post("/user", {
-				// User: { telegramId: telegram.initDataUnsafe.user.id },
-				User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
+				User: { telegramId: telegram.initDataUnsafe.user.id },
+				// User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
 			});
 
 			// console.log(data);

@@ -63,8 +63,8 @@ function ProductDetail() {
 				Collection: { id: collectionId },
 				Item: { id: product.id },
 				qty: quantity,
-				// User: { telegramId: telegram.initDataUnsafe.user.id },
-				User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
+				User: { telegramId: telegram.initDataUnsafe.user.id },
+				// User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
 			})
 		).data;
 
