@@ -1,4 +1,16 @@
-import { Flex, Button, Alert, Text, VStack, Select, AlertIcon, Heading, Divider, useToast } from "@chakra-ui/react";
+import {
+	Flex,
+	Button,
+	Alert,
+	Text,
+	VStack,
+	Select,
+	AlertIcon,
+	Heading,
+	Divider,
+	useToast,
+	Box,
+} from "@chakra-ui/react";
 import axios from "../../helper/axios";
 import React, { useContext } from "react";
 import { BiArrowBack } from "react-icons/bi";
@@ -12,7 +24,7 @@ import {
 	selectTotalPoints,
 	setSelectedDateTime,
 } from "../../features/collection/collectionSlice";
-import CollectionListItem from "./CartListItem";
+import CollectionListItem from "./CollectionListItem";
 
 // @ts-ignore
 const telegram = window.Telegram.WebApp;
@@ -49,10 +61,31 @@ function Collection() {
 
 		axios
 			.post("/schedule", {
-				Collection: { id: collectionId, date: dateTime },
+				Collection: { Id: collectionId, Date: dateTime },
 			})
 			.then(() => {
-				telegram.close();
+				// axios
+				// 	.post("/to be filled in", {
+				// 		// User: { telegramId: telegram.initDataUnsafe.user.id },
+				// 		User: {
+				// 			telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+				// 		},
+				// 		Collection: { id: collectionId, date: dateTime },
+				// 	})
+				// 	.then(() => {
+				// 		// Send telegram message
+				// 		telegram.close();
+				// 	});
+			})
+			.catch(() => {
+				toast({
+					title: "Oops!",
+					description: "Something went wrong. Please check your details and try again.",
+					isClosable: true,
+					duration: 3500,
+					position: "top",
+					status: "error",
+				});
 			});
 	};
 
@@ -67,24 +100,13 @@ function Collection() {
 				py={1}
 				borderBottom="1px solid rgba(0, 0, 0, 0.36)"
 			>
-				{/* <Link to="/">
-					<BiArrowBack fontSize="2em" />
-				</Link> */}
 				<Button onClick={() => navigate(-1)}>
 					<BiArrowBack /> Go Back
 				</Button>
 				<Heading ml={2}>Your Items</Heading>
 			</Flex>
 			{collectionItems.length > 0 ? (
-				<Flex
-					direction="column"
-					mb={5}
-					// borderBottom="1px solid grey"
-					// borderTop="1px solid grey"
-					pb={1}
-					backgroundColor="white"
-					mx="auto"
-				>
+				<Flex direction="column" mb={5} pb={1} backgroundColor="white" mx="auto">
 					<VStack spacing="8px" alignSelf="flex-start" mt={6}>
 						{collectionItems.map((ci) => (
 							<CollectionListItem key={ci.id} cartItem={ci} />
@@ -116,9 +138,9 @@ function Collection() {
 							<option key={i}>{d}</option>
 						))}
 					</Select>
-					<Text fontSize="lg" w="85vw" mx="auto">
-						Estimated points earned: {points}{" "}
-					</Text>
+					<Box w="85vw" mx="auto" py={4} px={8} border="1px solid rgba(0, 0, 0, 0.36)" borderRadius={16}>
+						<Text fontSize="lg">Estimated points earned: {points}</Text>
+					</Box>
 					<Button
 						w="100vw"
 						colorScheme="telegram"
@@ -128,7 +150,7 @@ function Collection() {
 						size="lg"
 						py={4}
 					>
-						Confirm
+						Confirm Collection
 					</Button>
 				</Flex>
 			) : (

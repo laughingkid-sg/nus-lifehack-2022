@@ -1,4 +1,4 @@
-import { Box, Button, Alert, SimpleGrid, Select, Text, Image } from "@chakra-ui/react";
+import { Box, Button, Alert, SimpleGrid, Select, Text, Image, useToast } from "@chakra-ui/react";
 import { Pagination } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import React, { useContext, useState } from "react";
@@ -21,14 +21,14 @@ const telegram = window.Telegram.WebApp;
 
 function ProductDetail() {
 	const { id } = useParams();
-	const { products } = useContext(AppContext);
 	const navigate = useNavigate();
+	const toast = useToast();
+
 	const dispatch = useDispatch();
-
-	const [quantity, setQuantity] = useState(0);
-
 	const collectionId = useSelector(selectCollectionId);
 	const collectionItem = useSelector(selectCollectionItems).find((ci) => ci.itemId === id);
+	const { products } = useContext(AppContext);
+	const [quantity, setQuantity] = useState(0);
 
 	const product = products.find((p) => id === p.id);
 
@@ -48,6 +48,13 @@ function ProductDetail() {
 
 	const addToCartHandler = async () => {
 		if (quantity === 0) {
+			toast({
+				title: "No changes made.",
+				status: "info",
+				duration: 3000,
+				isClosable: true,
+				position: "top",
+			});
 			return;
 		}
 
@@ -56,8 +63,8 @@ function ProductDetail() {
 				Collection: { id: collectionId },
 				Item: { id: product.id },
 				qty: quantity,
-				User: { telegramId: telegram.initDataUnsafe.user.id },
-				// User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
+				// User: { telegramId: telegram.initDataUnsafe.user.id },
+				User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
 			})
 		).data;
 

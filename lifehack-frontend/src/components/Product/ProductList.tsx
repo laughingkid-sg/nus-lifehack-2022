@@ -7,9 +7,12 @@ type Props = {
 };
 
 function ProductList({ products }: Props) {
-	// TODO Style this
 	if (products.length === 0) {
-		return <Text>No results.</Text>;
+		return (
+			<Text mx="auto" fontSize="3xl" textAlign="center" mt={"35vh"}>
+				No results.
+			</Text>
+		);
 	}
 
 	return (

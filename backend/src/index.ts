@@ -2,13 +2,26 @@ import { Telegraf } from "telegraf"
 import { ExtraReplyMessage } from "telegraf/typings/telegram-types"
 import { getCollectionHandler } from "./controllers/collection"
 import { getItemsHandler } from "./controllers/item"
-import { AppDataSource, User, DB, userRepository } from "./db"
-import { canRecycle, collection, doorstepCollection, guidelienes, postalUpdated, welcomeMsg } from "./templates"
+import {
+    AppDataSource,
+    User,
+    DB,
+    userRepository,
+    collectionRepository,
+} from "./db"
+import {
+    canRecycle,
+    collection,
+    doorstepCollection,
+    guidelienes,
+    postalUpdated,
+    welcomeMsg,
+} from "./templates"
 import { invalidPostal } from "./templates/errors"
 import axios from "axios"
 import { neaList } from "./data"
 import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram"
-
+import { CollectionStatus } from "./db/entity/Collection"
 
 let config = {
     method: "post",
@@ -103,31 +116,32 @@ bot.start(async (ctx) => {
         handle: ctx.from.username,
     }
 
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "♻️ Doorstep Collection",
-                    callback_data: "QAZ"
-                },              
+                    callback_data: "QAZ",
+                },
             ],
             [
                 {
                     text: "♻️ Check if item recycleable",
-                    callback_data: "EDC"
-                },              
+                    callback_data: "EDC",
+                },
             ],
             [
                 {
                     text: "♻️ Schedule Collection",
-                    callback_data: "RFV"
-                },              
-            ]              
-        ]
+                    callback_data: "RFV",
+                },
+            ],
+        ],
     }
-   
-    
+
     addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
 
     await createUser(user)
@@ -135,94 +149,133 @@ bot.start(async (ctx) => {
     ctx.reply(welcomeMsg(user.firstName), addtionalSettings)
 })
 
-bot.help(ctx => {
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+bot.help((ctx) => {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "♻️ Doorstep Collection",
-                    callback_data: "QAZ"
-                },              
+                    callback_data: "QAZ",
+                },
             ],
             [
                 {
                     text: "♻️ Check if item recycleable",
-                    callback_data: "EDC"
-                },              
+                    callback_data: "EDC",
+                },
             ],
             [
                 {
                     text: "♻️ Schedule Collection",
-                    callback_data: "RFV"
-                },              
-            ]              
-        ]
+                    callback_data: "RFV",
+                },
+            ],
+        ],
     }
-   
-    
+
     addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
 
     ctx.reply(welcomeMsg(ctx.from.first_name), addtionalSettings)
 })
 
-bot.on('callback_query', (ctx) => {
+bot.on("callback_query", (ctx) => {
     // Explicit usage
     const cbData = ctx.callbackQuery.data
     switch (cbData) {
         case "QAZ":
-            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!,  {
-                caption: doorstepCollection,  
-                ...messageSettings
+            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!, {
+                caption: doorstepCollection,
+                ...messageSettings,
             })
             ctx.answerCbQuery()
-            break;
+            break
         case "EDC":
             ctx.reply(canRecycle, messageSettings)
             ctx.answerCbQuery()
-            break;
+            break
 
-        case "RFV": 
-        ctx.reply(collection, messageSettings)
+        case "RFV":
+            ctx.reply(collection, messageSettings)
             ctx.answerCbQuery()
-            break; 
+            break
         default:
             ctx.answerCbQuery()
-            break;
+            break
     }
-  
-  })
-
-
-
+})
 
 bot.command("help", async (ctx) => {})
 
 bot.command("about", async (ctx) => {})
 
 bot.command("guidelines", async (ctx) => {
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "🚮 Blue Bins",
-                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/waste-minimisation-and-recycling"
-                },    
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/waste-minimisation-and-recycling",
+                },
                 {
                     text: "💻 E-waste",
-                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management"
-                },                  
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management",
+                },
             ],
-       
-        ]}
-        addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
+        ],
+    }
+    addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
     ctx.reply(guidelienes, addtionalSettings)
 })
 
-bot.command("points", async (ctx) => {})
+bot.command("points", async (ctx) => {
+    const collections = await collectionRepository()
+        .createQueryBuilder()
+        .where("userTelegramId = :telegramId", {
+            telegramId: ctx.message.from.id,
+        })
+        .getMany()
 
-bot.command("collections", async (ctx) => {})
+    const totalPoints = collections.reduce((total, coll) => {
+        const awarded = coll.pointsAwarded ? coll.pointsAwarded : 0
+        const claimed = coll.pointClaimed ? coll.pointClaimed : 0
+
+        return total + (awarded - claimed)
+    }, 0)
+
+    const finalMessage = `You current have ${totalPoints} points!`
+    ctx.reply(finalMessage)
+})
+
+bot.command("collections", async (ctx) => {
+    const collections = await collectionRepository()
+        .createQueryBuilder()
+        .where("userTelegramId = :telegramId", {
+            telegramId: ctx.message.from.id,
+        })
+        .andWhere("status = :status", { status: CollectionStatus.SCHEDULED })
+        .getMany()
+
+    if (collections.length === 0) {
+        ctx.reply(
+            "You currently don't have any collections scheduled. You can start by clicking on 'Book a Collection'!",
+        )
+        return
+    }
+
+    const dates = collections
+        .map((coll) => "- ".concat(coll.collectionDate))
+        .join("\n")
+    const message =
+        "Below are the timeslots that you have scheduled for collection:\n" +
+        dates
+    ctx.reply(message)
+})
 
 bot.command("postal", async (ctx) => {
     const postal = ctx.message.text.replace("/postal ", "")
@@ -253,10 +306,10 @@ bot.on("photo", async (ctx) => {
     let output = ``
 
     for (let i = 0; i < tags.length; i++) {
-        const found  = neaList.find(item => item.name === tags[i].name)
+        const found = neaList.find((item) => item.name === tags[i].name)
         if (found) {
             output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\nFor recycling guidelines please check /guidelines.`
-            break;
+            break
         }
     }
 
