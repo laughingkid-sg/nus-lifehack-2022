@@ -13,24 +13,39 @@ Learn more about each of the feature using the buttons below.
 
 const postalUpdated = `Your postal code have been updated!`
 
-const guidelines = `
-You can use the blue bins or the allocated collection points for materials that are paper, plastic, glass or metal.
+const doorstepCollection = `Have you seen flyers for doorstep collection for recyclables? 📝 
 
-Before recycling these items, take note of the following: 
+Well, we are improving it. From now on you will recieve reminders <b>1 week, 3 days and 1 day</b> before the collection 📅
 
-1. Items such as shampoo/detergent bottles, canned/bottled drinks, jam jars must be cleaned before recycling them.
-2. Items such as cardboard or drink cartons should be flattened before recycling them.
-3. Do not recycle single use disposables that are greasy or contains food
+To be subscribe to such messages, please set your postal 🏘️ by using the postal command (exmaple: /postal 123456) `
 
-🛋️ For bulky items and renovation waste, please contact your respective Town Council for disposal.
+const guidelienes = `Use the blue bins or the allocated collection points for materials that are paper, plastic, glass or metal. ♻️
 
-🖥️ For electronic waste (e.g. laptops, batteries), please go to the allocated e-waste collection points. 
-`
+Before recycling these items, take note of the following ‼️
 
-const checkRecyclable = `
-🤔 Not sure if you can recycle something? No worries! 
+✅ Items such as shampoo/detergent bottles, canned/bottled drinks, jam jars must be cleaned before recycling them.
+✅ Items such as cardboard or drink cartons should be flattened before recycling them.
+✅ Do not recycle single use disposables that are greasy or contains food
 
-📸 Send me a picture and I can tell you if that item can be recyclable!
-`
+🛋 For bulky items and renovation waste, please contact your respective Town Council for disposal.
 
-export { welcomeMsg, postalUpdated, guidelines }
+🖥 For electronic waste (e.g. laptops, batteries), please go to the allocated e-waste collection points.
+
+Checkout NEA website for more infomation using the buttons below ⬇️`
+
+const canRecycle = `🤔 Not sure if you can recycle something? No worries! 
+
+📸 Send me a picture and I can tell you if it is recyclable!`
+
+const collection = `Use the 'Book a Collection' button to start out app which will allow you to submit a collection request.
+
+Our team will be conducting door-to-door collection for your recycables. Let them know your collection Id to earn your points.`
+
+export {
+    welcomeMsg,
+    postalUpdated,
+    doorstepCollection,
+    guidelienes,
+    canRecycle,
+    collection,
+}

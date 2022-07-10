@@ -98,6 +98,7 @@ export const neaList = [
     { name: "medals", type: itemType.METAL },
     { name: "metal bottle cap", type: itemType.METAL },
     { name: "aerosol can", type: itemType.METAL },
+    { name: "beverage can", type: itemType.METAL }, 
     { name: "aluminium tray", type: itemType.METAL },
     { name: "aluminium foil", type: itemType.METAL },
     { name: "paint container", type: itemType.METAL },

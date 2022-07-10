@@ -1,11 +1,17 @@
 import axios from "axios"
 import { Request, Response } from "express"
 import { Markup, Telegraf, Context as TelegramContext } from "telegraf"
+import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram"
 import { ExtraReplyMessage } from "telegraf/typings/telegram-types"
 import { neaList } from "../data"
 import { AppDataSource, User, userRepository } from "../db"
 import { postalUpdated, welcomeMsg, invalidPostal } from "../templates"
 require("dotenv").config()
+
+type tags = {
+    name: string
+    confidence: number
+}
 
 const messageSettings: ExtraReplyMessage = {
     parse_mode: "HTML",
@@ -57,11 +63,19 @@ bot.telegram
         },
         {
             command: `about`,
-            description: `Find about more about this bot`,
+            description: `Find out more about this bot`,
         },
         {
             command: `guidelines`,
-            description: `Find about more recycling guidelines`,
+            description: `Find out about recycling guidelines`,
+        },
+        {
+            command: `points`,
+            description: `Check your points`,
+        },
+        {
+            command: `collections`,
+            description: `Get a list of upcoming scheduled collections`,
         },
     ])
     .then((result) => {
@@ -76,12 +90,38 @@ bot.start(async (ctx) => {
         handle: ctx.from.username,
     }
     await createUser(user)
-    ctx.reply(welcomeMsg(user.firstName), {
-        parse_mode: "HTML",
-        protect_content: true,
-    })
+
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
+    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+        inline_keyboard: [
+            [
+                {
+                    text: "♻️ Doorstep Collection",
+                    callback_data: "QAZ"
+                },              
+            ],
+            [
+                {
+                    text: "♻️ Check if item recycleable",
+                    callback_data: "EDC"
+                },              
+            ],
+            [
+                {
+                    text: "♻️ Schedule Collection",
+                    callback_data: "RFV"
+                },              
+            ]              
+        ]
+    }
+   
+    
+    addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
+    
+    ctx.reply(welcomeMsg(user.firstName), addtionalSettings)
 })
 
+// Commands
 bot.command("postal", async (ctx) => {
     const postal = ctx.message.text.replace("/postal ", "")
     const match = postal.match(/\d{6}/g)
@@ -100,10 +140,15 @@ bot.command("postal", async (ctx) => {
     }
 })
 
-type tags = {
-    name: string
-    confidence: number
-}
+bot.command("help", async (ctx) => {})
+
+bot.command("about", async (ctx) => {})
+
+bot.command("guidelines", async (ctx) => {})
+
+bot.command("points", async (ctx) => {})
+
+bot.command("collections", async (ctx) => {})
 
 bot.on("photo", async (ctx) => {
     const file = ctx.message.photo[ctx.message.photo.length - 1]
@@ -118,7 +163,7 @@ bot.on("photo", async (ctx) => {
     for (let i = 0; i < tags.length; i++) {
         const found = neaList.find((item) => item.name === tags[i].name)
         if (found) {
-            output += `I think this is a <b>${found.name}</b>, it should be recycled as a <b>${found.type}</b>.<br>For recycling guidelines please check /guidelines`
+            output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\nFor recycling guidelines please check /guidelines.`
             break
         }
     }
@@ -135,4 +180,11 @@ const telegraf = async (req: Request, res: Response) => {
     return res.status(201).send()
 }
 
-export { telegraf }
+const confirmationMessage = async (req: Request, res: Response) => {
+    const telegramId =  req.body['User']['telegramId']
+    const collectionId  = req.body['Collection']['collectionDate']
+    const date  = req.body['Collection']['id']
+    bot.telegram.sendMessage(telegramId, `Thank you for scheduling a collection with us on ${date}. Your collection id is ${collectionId}`)
+}
+
+export { telegraf, confirmationMessage }
