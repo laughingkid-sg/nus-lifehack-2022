@@ -95,7 +95,7 @@ function Collection() {
 						Selected Timeslot
 					</Heading>
 					{!dateTime && (
-						<Alert status="info">
+						<Alert status="info" mt={4}>
 							<AlertIcon /> Please enter a timeslot.
 						</Alert>
 					)}
@@ -128,7 +128,7 @@ function Collection() {
 						size="lg"
 						py={4}
 					>
-						Checkout
+						Confirm
 					</Button>
 				</Flex>
 			) : (
@@ -147,7 +147,7 @@ function Collection() {
 						You have no items to checkout
 					</Heading>
 					<Button onClick={() => navigate(-1)} colorScheme="green">
-						Confirm
+						Go Back
 					</Button>
 				</Flex>
 			)}

@@ -25,6 +25,7 @@ export const App = () => {
 			// console.log(telegram.initDataUnsafe.user.id);
 			const { data } = await axios.post("/user", {
 				User: { telegramId: telegram.initDataUnsafe.user.id },
+				// User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617 },
 			});
 
 			// console.log(data);
@@ -62,6 +63,7 @@ export const App = () => {
 			dispatch(setCollectionItems(collectionItems));
 			dispatch(setCollectionId(collectionList.id));
 			dispatch(setPoints(points));
+			telegram.expand();
 		};
 
 		init();
