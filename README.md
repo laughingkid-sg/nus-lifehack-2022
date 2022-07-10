@@ -11,26 +11,32 @@ In 2021, the National Environment Agency lamented that Singapore'sIn 2021, the N
 
 # Target Audience
 
-Youths
+Youths aged 35 and under.
 
 # Core Features
 
--   **Scheduling**
+-   **Reminders and Awareness**
 
-> Users can open a web application on Telegram to schedule a collection for their recyclables. By doing so, they can stand a chance to earn points which can be redeemed as vouchers.
+With the convenience of a Telegram Bot, weekly reminders or tips can be sent to users so that they will not forget their scheduled collections and find new ways to recycle.
 
--   **Reminder**
+Our bot will be able to send reminders for upcoming door-to-door collections. This will allow Singaporeans to better manage their recycling schedules and take note of upcoming collections. This is to replace physical flyers which helps reduce paper waste.
 
-> With the convenience of a Telegram Bot, weekly reminders or tips can be sent to users so that they will not forget their scheduled collections and find new ways to recycle.
+The bot will also send weekly tips on recycling and recycling efforts in Singapore to help better educate users.
 
--   **Detection**
+-   **Item Recognition**
 
-> Sometimes it is difficult to remember which items can be recycled. Hence, by leveraging on Azure's **ZHENG TECK TO FILL**, users can simply upload an image to the bot and it can tell the users if it can be recycled.
+Sometimes it is difficult to remember what items can be recycled. Users can simply upload an image to the bot and tell the users if it can be recycled. This will help Singaporeans better differentiate between non-recyclables and recyclables.
+
+-   **Schedule Collection**
+
+For Singaporeans who can't be around for the monthly upcoming door-to-door collections, we create an eCommerce-like web application on Telegram where users can easily add their recyclables to a "cart" and "checkout" to schedule a collection with recycling partners. By doing so, they can stand a chance to earn points which can be redeemed as vouchers.
 
 # Technology Stack
 
--   ReactJS
--   Express
--   Redux
--   Telegram
--   **ZHENGTECK TO FILL**
+-   Language: Typescript
+-   Frontend: React with Chakra UI on Netlify
+-   Backend: Node.js with Express on Azure Web Apps
+-   Database: Microsoft SQL (via TypeORM)
+-   Other: Telegraf, Azure Computer Vision
+
+The Telegraf library is used to handle requests from Telegram and Azure Computer Vision is used for image recognition.

@@ -60,7 +60,7 @@ function Collection() {
 		}
 
 		toast({
-			title: "Processing.....",
+			title: "Processing your collection",
 			status: "info",
 			duration: 3500,
 			isClosable: true,
@@ -70,18 +70,15 @@ function Collection() {
 			.post("/schedule", {
 				Collection: { Id: collectionId, Date: dateTime },
 			})
-			.then(() => {
-				axios
-					.post("/telegraf/confirm", {
-						User: {
-							telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
-						},
-						Collection: { id: collectionId, collectionDate: dateTime },
-					})
-					.then(() => {
-						console.log("Closing");
-						telegram.close();
-					});
+			.then(async () => {
+				await axios.post("/telegraf/confirm", {
+					User: {
+						telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+					},
+					Collection: { id: collectionId, collectionDate: dateTime },
+				});
+				console.log("Done");
+				telegram.close();
 			})
 			.catch(() => {
 				toast({
@@ -147,6 +144,7 @@ function Collection() {
 					<Box w="85vw" mx="auto" py={4} px={8} border="1px solid rgba(0, 0, 0, 0.36)" borderRadius={16}>
 						<Text fontSize="lg">Estimated points earned: {points}</Text>
 					</Box>
+					<Box mb="60px"></Box>
 					<Button
 						w="100vw"
 						colorScheme="telegram"
