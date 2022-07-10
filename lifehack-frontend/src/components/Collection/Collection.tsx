@@ -79,7 +79,7 @@ function Collection() {
 						Collection: { id: collectionId, collectionDate: dateTime },
 					})
 					.then(() => {
-						// Send telegram message
+						console.log("Closing");
 						telegram.close();
 					});
 			})

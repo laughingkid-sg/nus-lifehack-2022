@@ -319,7 +319,7 @@ const confirmationMessage = async (req: Request, res: Response) => {
     const collectionId = req.body["Collection"]["id"]
     bot.telegram.sendMessage(
         telegramId,
-        `Thank you for scheduling a collection with us on ${date}. Your collection id is ${collectionId}`,
+        `Thank you for scheduling a collection with us on ${collectionId}. Your collection id is ${date}`,
     )
 }
 

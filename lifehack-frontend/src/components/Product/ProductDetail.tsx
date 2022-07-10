@@ -77,7 +77,7 @@ function ProductDetail() {
 		setQuantity(0);
 		toast({
 			title: "Success",
-			description: `Added ${quantity} to item`,
+			description: `Added ${quantity} item(s).`,
 			isClosable: true,
 			duration: 5000,
 			position: "top",
