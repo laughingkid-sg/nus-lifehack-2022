@@ -44,7 +44,6 @@ function Collection() {
 				isClosable: true,
 				position: "top",
 			});
-			// Send error message to user
 			return;
 		}
 

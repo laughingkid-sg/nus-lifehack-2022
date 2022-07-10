@@ -27,8 +27,8 @@ function ProductDetail() {
 
 	const [quantity, setQuantity] = useState(0);
 
-	const cartId = useSelector(selectCollectionId);
-	const cartItem = useSelector(selectCollectionItems).find((ci) => ci.itemId === id);
+	const collectionId = useSelector(selectCollectionId);
+	const collectionItem = useSelector(selectCollectionItems).find((ci) => ci.itemId === id);
 
 	const product = products.find((p) => id === p.id);
 
@@ -53,15 +53,15 @@ function ProductDetail() {
 
 		const addItem: ResponseCollectionItem = (
 			await axios.post("/add", {
-				Collection: { id: cartId },
+				Collection: { id: collectionId },
 				Item: { id: product.id },
 				qty: quantity,
-				User: { telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user?.id : 236682617 },
+				User: { telegramId: telegram.initDataUnsafe.user.id },
 			})
 		).data;
 
-		if (cartItem) {
-			dispatch(updateCollectionItem({ ...cartItem, quantity: addItem.qty }));
+		if (collectionItem) {
+			dispatch(updateCollectionItem({ ...collectionItem, quantity: addItem.qty }));
 		} else {
 			dispatch(addCollectionItem({ id: addItem.id, itemId: product.id, quantity: addItem.qty }));
 		}
@@ -88,11 +88,6 @@ function ProductDetail() {
 					<Text fontSize="2xl" fontWeight={600} pt={3} pb={2}>
 						{product.name}
 					</Text>
-					{/* {cartItem && (
-						<Alert status="info" variant="subtle" borderRadius="16px">
-							You currently have {cartItem.quantity} in your cart.
-						</Alert>
-					)} */}
 					{/* Product description */}
 					<Text fontSize="lg" fontWeight={600} py={2}>
 						Description
@@ -104,7 +99,6 @@ function ProductDetail() {
 			</Box>
 			{/* Footer */}
 			<Box position="fixed" bottom={0} w="100%" backgroundColor="lightgray" px={4} pt={3} h="8vh">
-				{/* This will be changed to a dropdown list */}
 				<SimpleGrid columns={2} columnGap="16px">
 					<Select onChange={quantityChangeHandler} backgroundColor="white" value={quantity}>
 						{Array.apply(0, Array(11)).map((x, i) => (
