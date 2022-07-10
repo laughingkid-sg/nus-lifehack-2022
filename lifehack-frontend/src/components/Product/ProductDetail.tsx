@@ -75,6 +75,14 @@ function ProductDetail() {
 		}
 		dispatch(addPoints(product.points * quantity));
 		setQuantity(0);
+		toast({
+			title: "Success",
+			description: `Added ${quantity} to item`,
+			isClosable: true,
+			duration: 5000,
+			position: "top",
+			status: "success",
+		});
 	};
 
 	return (
