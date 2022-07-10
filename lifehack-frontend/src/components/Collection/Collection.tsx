@@ -46,7 +46,7 @@ function Collection() {
 		dispatch(setSelectedDateTime(e.target.value));
 	};
 
-	const checkoutItemsHandler = () => {
+	const checkoutItemsHandler = async () => {
 		if (!dateTime) {
 			toast({
 				title: "Error",
@@ -66,31 +66,37 @@ function Collection() {
 			isClosable: true,
 			position: "top",
 		});
-		axios
-			.post("/schedule", {
+		try {
+			await axios.post("/schedule", {
 				Collection: { Id: collectionId, Date: dateTime },
-			})
-			.then(async () => {
-				await axios.post("/telegraf/confirm", {
-					// User: {
-					// 	telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
-					// },
-					User: { telegramId: telegram.initDataUnsafe.user.id },
-					Collection: { id: collectionId, collectionDate: dateTime },
-				});
-				console.log("Done");
-				telegram.close();
-			})
-			.catch(() => {
-				toast({
-					title: "Oops!",
-					description: "Something went wrong. Please check your details and try again.",
-					isClosable: true,
-					duration: 3500,
-					position: "top",
-					status: "error",
-				});
 			});
+			await axios.post("/telegraf/confirm", {
+				// User: {
+				// 	telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+				// },
+				User: { telegramId: telegram.initDataUnsafe.user.id },
+				Collection: { id: collectionId, collectionDate: dateTime },
+			});
+
+			toast({
+				title: "Successful",
+				description: "You may close the web app now",
+				isClosable: true,
+				duration: 3500,
+				position: "top",
+				status: "success",
+			});
+			telegram.close();
+		} catch (e) {
+			toast({
+				title: "Oops!",
+				description: "Something went wrong. Please check your details and try again.",
+				isClosable: true,
+				duration: 3500,
+				position: "top",
+				status: "error",
+			});
+		}
 	};
 
 	return (
