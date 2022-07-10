@@ -11,18 +11,12 @@ import {
     userRepository,
 } from "../db"
 import { CollectionStatus } from "../db/entity/Collection"
-import { postalUpdated, welcomeMsg, invalidPostal } from "../templates"
+import { postalUpdated, welcomeMsg, invalidPostal, guidelienes, doorstepCollection, canRecycle, collection } from "../templates"
 require("dotenv").config()
 
-type tags = {
-    name: string
-    confidence: number
-}
+const bot = new Telegraf(process.env.BOT_TOKEN!)
 
-const messageSettings: ExtraReplyMessage = {
-    parse_mode: "HTML",
-    protect_content: true,
-}
+bot.telegram.setWebhook(process.env.WEBHOOK_URL!)
 
 let config = {
     method: "post",
@@ -34,7 +28,11 @@ let config = {
     data: {},
 }
 
-// Create User
+type tags = {
+    name: string
+    confidence: number
+}
+
 const createUser = async (user: User) => {
     // UPSERT not supported in typeorm mssql
 
@@ -55,7 +53,13 @@ const createUser = async (user: User) => {
     }
 }
 
-const bot = new Telegraf(process.env.BOT_TOKEN!)
+
+const messageSettings: ExtraReplyMessage = {
+    parse_mode: "HTML",
+    protect_content: true,
+}
+
+
 
 bot.telegram
     .setMyCommands([
@@ -95,7 +99,6 @@ bot.start(async (ctx) => {
         lastName: ctx.from.last_name,
         handle: ctx.from.username,
     }
-    await createUser(user)
 
     let addtionalSettings: ExtraReplyMessage = JSON.parse(
         JSON.stringify(messageSettings),
@@ -125,10 +128,95 @@ bot.start(async (ctx) => {
 
     addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
 
+    await createUser(user)
+
     ctx.reply(welcomeMsg(user.firstName), addtionalSettings)
 })
 
-// Commands
+bot.help(ctx => {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
+    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+        inline_keyboard: [
+            [
+                {
+                    text: "♻️ Doorstep Collection",
+                    callback_data: "QAZ"
+                },              
+            ],
+            [
+                {
+                    text: "♻️ Check if item recycleable",
+                    callback_data: "EDC"
+                },              
+            ],
+            [
+                {
+                    text: "♻️ Schedule Collection",
+                    callback_data: "RFV"
+                },              
+            ]              
+        ]
+    }
+   
+    
+    addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
+
+    ctx.reply(welcomeMsg(ctx.from.first_name), addtionalSettings)
+})
+
+bot.on('callback_query', (ctx) => {
+    // Explicit usage
+    const cbData = ctx.callbackQuery.data
+    switch (cbData) {
+        case "QAZ":
+            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!,  {
+                caption: doorstepCollection,  
+                ...messageSettings
+            })
+            ctx.answerCbQuery()
+            break;
+        case "EDC":
+            ctx.reply(canRecycle, messageSettings)
+            ctx.answerCbQuery()
+            break;
+
+        case "RFV": 
+        ctx.reply(collection, messageSettings)
+            ctx.answerCbQuery()
+            break; 
+        default:
+            ctx.answerCbQuery()
+            break;
+    }
+  
+  })
+
+
+bot.command("help", async (ctx) => {})
+
+bot.command("about", async (ctx) => {})
+
+bot.command("guidelines", async (ctx) => {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
+    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+        inline_keyboard: [
+            [
+                {
+                    text: "🚮 Blue Bins",
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/waste-minimisation-and-recycling"
+                },    
+                {
+                    text: "💻 E-waste",
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management"
+                },                  
+            ],
+       
+        ]}
+        addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
+    ctx.reply(guidelienes, addtionalSettings)
+})
+
+
 bot.command("postal", async (ctx) => {
     const postal = ctx.message.text.replace("/postal ", "")
     const match = postal.match(/\d{6}/g)
@@ -146,13 +234,6 @@ bot.command("postal", async (ctx) => {
         ctx.reply(invalidPostal, messageSettings)
     }
 })
-
-bot.command("help", async (ctx) => {})
-
-bot.command("about", async (ctx) => {})
-
-bot.command("guidelines", async (ctx) => {})
-
 bot.command("points", async (ctx) => {
     const collections = await collectionRepository()
         .createQueryBuilder()
@@ -208,10 +289,10 @@ bot.on("photo", async (ctx) => {
     let output = ``
 
     for (let i = 0; i < tags.length; i++) {
-        const found = neaList.find((item) => item.name === tags[i].name)
+        const found  = neaList.find(item => item.name === tags[i].name)
         if (found) {
             output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\nFor recycling guidelines please check /guidelines.`
-            break
+            break;
         }
     }
 

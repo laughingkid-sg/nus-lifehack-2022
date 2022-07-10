@@ -23,6 +23,26 @@ import { neaList } from "./data"
 import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram"
 import { CollectionStatus } from "./db/entity/Collection"
 
+DB()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+        // const check = async () => {
+        //     const result = await getCollectionHandler(286992820)
+        // }
+
+        // check();
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization", err)
+    })
+
+    type tags = {
+        name: string
+        confidence: number
+    }
+
+const bot = new Telegraf(process.env.BOT_TOKEN!)   
+
 let config = {
     method: "post",
     url: process.env.MS_COMPUTERVISION_URL!,
@@ -31,11 +51,6 @@ let config = {
         "Content-Type": "application/json",
     },
     data: {},
-}
-
-type tags = {
-    name: string
-    confidence: number
 }
 
 const createUser = async (user: User) => {
@@ -58,20 +73,6 @@ const createUser = async (user: User) => {
     }
 }
 
-DB()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-        // const check = async () => {
-        //     const result = await getCollectionHandler(286992820)
-        // }
-
-        // check();
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
-
-const bot = new Telegraf(process.env.BOT_TOKEN!)
 const messageSettings: ExtraReplyMessage = {
     parse_mode: "HTML",
     protect_content: true,
