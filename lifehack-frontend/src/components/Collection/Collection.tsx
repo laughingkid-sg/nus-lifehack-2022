@@ -59,23 +59,29 @@ function Collection() {
 			return;
 		}
 
+		toast({
+			title: "Processing.....",
+			status: "info",
+			duration: 3500,
+			isClosable: true,
+			position: "top",
+		});
 		axios
 			.post("/schedule", {
 				Collection: { Id: collectionId, Date: dateTime },
 			})
 			.then(() => {
-				// axios
-				// 	.post("/to be filled in", {
-				// 		// User: { telegramId: telegram.initDataUnsafe.user.id },
-				// 		User: {
-				// 			telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
-				// 		},
-				// 		Collection: { id: collectionId, date: dateTime },
-				// 	})
-				// 	.then(() => {
-				// 		// Send telegram message
-				// 		telegram.close();
-				// 	});
+				axios
+					.post("/telegraf/confirm", {
+						User: {
+							telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
+						},
+						Collection: { id: collectionId, collectionDate: dateTime },
+					})
+					.then(() => {
+						// Send telegram message
+						telegram.close();
+					});
 			})
 			.catch(() => {
 				toast({

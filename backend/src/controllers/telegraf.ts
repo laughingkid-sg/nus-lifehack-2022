@@ -11,7 +11,15 @@ import {
     userRepository,
 } from "../db"
 import { CollectionStatus } from "../db/entity/Collection"
-import { postalUpdated, welcomeMsg, invalidPostal, guidelienes, doorstepCollection, canRecycle, collection } from "../templates"
+import {
+    postalUpdated,
+    welcomeMsg,
+    invalidPostal,
+    guidelienes,
+    doorstepCollection,
+    canRecycle,
+    collection,
+} from "../templates"
 require("dotenv").config()
 
 const bot = new Telegraf(process.env.BOT_TOKEN!)
@@ -53,13 +61,10 @@ const createUser = async (user: User) => {
     }
 }
 
-
 const messageSettings: ExtraReplyMessage = {
     parse_mode: "HTML",
     protect_content: true,
 }
-
-
 
 bot.telegram
     .setMyCommands([
@@ -133,89 +138,89 @@ bot.start(async (ctx) => {
     ctx.reply(welcomeMsg(user.firstName), addtionalSettings)
 })
 
-bot.help(ctx => {
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+bot.help((ctx) => {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "♻️ Doorstep Collection",
-                    callback_data: "QAZ"
-                },              
+                    callback_data: "QAZ",
+                },
             ],
             [
                 {
                     text: "♻️ Check if item recycleable",
-                    callback_data: "EDC"
-                },              
+                    callback_data: "EDC",
+                },
             ],
             [
                 {
                     text: "♻️ Schedule Collection",
-                    callback_data: "RFV"
-                },              
-            ]              
-        ]
+                    callback_data: "RFV",
+                },
+            ],
+        ],
     }
-   
-    
+
     addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
 
     ctx.reply(welcomeMsg(ctx.from.first_name), addtionalSettings)
 })
 
-bot.on('callback_query', (ctx) => {
+bot.on("callback_query", (ctx) => {
     // Explicit usage
     const cbData = ctx.callbackQuery.data
     switch (cbData) {
         case "QAZ":
-            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!,  {
-                caption: doorstepCollection,  
-                ...messageSettings
+            ctx.replyWithPhoto(process.env.SAMPLE_PHOTO!, {
+                caption: doorstepCollection,
+                ...messageSettings,
             })
             ctx.answerCbQuery()
-            break;
+            break
         case "EDC":
             ctx.reply(canRecycle, messageSettings)
             ctx.answerCbQuery()
-            break;
+            break
 
-        case "RFV": 
-        ctx.reply(collection, messageSettings)
+        case "RFV":
+            ctx.reply(collection, messageSettings)
             ctx.answerCbQuery()
-            break; 
+            break
         default:
             ctx.answerCbQuery()
-            break;
+            break
     }
-  
-  })
-
+})
 
 bot.command("help", async (ctx) => {})
 
 bot.command("about", async (ctx) => {})
 
 bot.command("guidelines", async (ctx) => {
-    let addtionalSettings: ExtraReplyMessage = JSON.parse(JSON.stringify(messageSettings));
-    let inlineKeyboardMarkupSettings : InlineKeyboardMarkup = {
+    let addtionalSettings: ExtraReplyMessage = JSON.parse(
+        JSON.stringify(messageSettings),
+    )
+    let inlineKeyboardMarkupSettings: InlineKeyboardMarkup = {
         inline_keyboard: [
             [
                 {
                     text: "🚮 Blue Bins",
-                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/waste-minimisation-and-recycling"
-                },    
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/waste-minimisation-and-recycling",
+                },
                 {
                     text: "💻 E-waste",
-                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management"
-                },                  
+                    url: "www.nea.gov.sg/our-services/waste-management/3r-programmes-and-resources/e-waste-management",
+                },
             ],
-       
-        ]}
-        addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
+        ],
+    }
+    addtionalSettings.reply_markup = inlineKeyboardMarkupSettings
     ctx.reply(guidelienes, addtionalSettings)
 })
-
 
 bot.command("postal", async (ctx) => {
     const postal = ctx.message.text.replace("/postal ", "")
@@ -289,10 +294,10 @@ bot.on("photo", async (ctx) => {
     let output = ``
 
     for (let i = 0; i < tags.length; i++) {
-        const found  = neaList.find(item => item.name === tags[i].name)
+        const found = neaList.find((item) => item.name === tags[i].name)
         if (found) {
             output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\nFor recycling guidelines please check /guidelines.`
-            break;
+            break
         }
     }
 
@@ -310,8 +315,8 @@ const telegraf = async (req: Request, res: Response) => {
 
 const confirmationMessage = async (req: Request, res: Response) => {
     const telegramId = req.body["User"]["telegramId"]
-    const collectionId = req.body["Collection"]["collectionDate"]
-    const date = req.body["Collection"]["id"]
+    const date = req.body["Collection"]["collectionDate"]
+    const collectionId = req.body["Collection"]["id"]
     bot.telegram.sendMessage(
         telegramId,
         `Thank you for scheduling a collection with us on ${date}. Your collection id is ${collectionId}`,
