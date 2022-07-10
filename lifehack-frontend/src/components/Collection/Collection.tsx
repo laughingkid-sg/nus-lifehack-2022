@@ -70,13 +70,14 @@ function Collection() {
 			await axios.post("/schedule", {
 				Collection: { Id: collectionId, Date: dateTime },
 			});
-			await axios.post("/telegraf/confirm", {
-				// User: {
-				// 	telegramId: telegram.initDataUnsafe.user?.id ? telegram.initDataUnsafe.user.id : 236682617,
-				// },
-				User: { telegramId: telegram.initDataUnsafe.user.id },
-				Collection: { id: collectionId, collectionDate: dateTime },
-			});
+			await axios
+				.post("/telegraf/confirm", {
+					User: { telegramId: telegram.initDataUnsafe.user.id },
+					Collection: { id: collectionId, collectionDate: dateTime },
+				})
+				.then(() => {
+					telegram.close();
+				});
 
 			toast({
 				title: "Successful",
@@ -86,7 +87,6 @@ function Collection() {
 				position: "top",
 				status: "success",
 			});
-			telegram.close();
 		} catch (e) {
 			toast({
 				title: "Oops!",

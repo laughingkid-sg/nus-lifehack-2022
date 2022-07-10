@@ -321,6 +321,7 @@ const confirmationMessage = async (req: Request, res: Response) => {
         telegramId,
         `Thank you for scheduling a collection with us on ${collectionId}. Your collection id is ${date}`,
     )
+    res.status(200).send()
 }
 
 export { telegraf, confirmationMessage }
