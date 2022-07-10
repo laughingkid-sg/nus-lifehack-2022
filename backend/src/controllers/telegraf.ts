@@ -10,6 +10,7 @@ import {
     User,
     userRepository,
 } from "../db"
+import { CollectionStatus } from "../db/entity/Collection"
 import { postalUpdated, welcomeMsg, invalidPostal } from "../templates"
 require("dotenv").config()
 
@@ -171,7 +172,30 @@ bot.command("points", async (ctx) => {
     ctx.reply(finalMessage)
 })
 
-bot.command("collections", async (ctx) => {})
+bot.command("collections", async (ctx) => {
+    const collections = await collectionRepository()
+        .createQueryBuilder()
+        .where("userTelegramId = :telegramId", {
+            telegramId: ctx.message.from.id,
+        })
+        .andWhere("status = :status", { status: CollectionStatus.SCHEDULED })
+        .getMany()
+
+    if (collections.length === 0) {
+        ctx.reply(
+            "You currently don't have any collections scheduled. You can start by clicking on 'Book a Collection'!",
+        )
+        return
+    }
+
+    const dates = collections
+        .map((coll) => "- ".concat(coll.collectionDate))
+        .join("\n")
+    const message =
+        "Below are the timeslots that you have scheduled for collection:\n" +
+        dates
+    ctx.reply(message)
+})
 
 bot.on("photo", async (ctx) => {
     const file = ctx.message.photo[ctx.message.photo.length - 1]
