@@ -65,8 +65,6 @@ export const App = () => {
 		};
 
 		init();
-		// If there is no collection, direct them to date select page
-		// Maybe if its past their selected date we need to ask them to select again at /cart
 	}, []);
 
 	return (
