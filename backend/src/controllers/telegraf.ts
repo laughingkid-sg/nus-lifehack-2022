@@ -3,6 +3,7 @@ import { Request, Response } from "express"
 import { Markup, Telegraf, Context as TelegramContext } from "telegraf"
 import { InlineKeyboardMarkup } from "telegraf/typings/core/types/typegram"
 import { ExtraReplyMessage } from "telegraf/typings/telegram-types"
+import { createContext } from "vm"
 import { neaList } from "../data"
 import {
     AppDataSource,
@@ -19,6 +20,7 @@ import {
     doorstepCollection,
     canRecycle,
     collection,
+    about,
 } from "../templates"
 require("dotenv").config()
 
@@ -64,21 +66,23 @@ const createUser = async (user: User) => {
 const messageSettings: ExtraReplyMessage = {
     parse_mode: "HTML",
     protect_content: true,
+    disable_web_page_preview: true
 }
 
 bot.telegram
     .setMyCommands([
         {
-            command: `postal`,
-            description: `Set your postal code (e.g. /postal 123456)`,
+            command: `about`,
+            description: `Find out more about this bot`,
+        },
+        
+        {
+            command: `collections`,
+            description: `Get a list of upcoming scheduled collections`,
         },
         {
             command: `help`,
             description: `Get help for using the bot`,
-        },
-        {
-            command: `about`,
-            description: `Find out more about this bot`,
         },
         {
             command: `guidelines`,
@@ -89,8 +93,8 @@ bot.telegram
             description: `Check your points`,
         },
         {
-            command: `collections`,
-            description: `Get a list of upcoming scheduled collections`,
+            command: `postal`,
+            description: `Set your postal code (e.g. /postal 123456)`,
         },
     ])
     .then((result) => {
@@ -196,9 +200,7 @@ bot.on("callback_query", (ctx) => {
     }
 })
 
-bot.command("help", async (ctx) => {})
-
-bot.command("about", async (ctx) => {})
+bot.command("about", async (ctx) => ctx.reply(about, messageSettings))
 
 bot.command("guidelines", async (ctx) => {
     let addtionalSettings: ExtraReplyMessage = JSON.parse(
@@ -245,6 +247,7 @@ bot.command("points", async (ctx) => {
         .where("userTelegramId = :telegramId", {
             telegramId: ctx.message.from.id,
         })
+        .andWhere("status = :status", {status: CollectionStatus.COMPLETED})
         .getMany()
 
     const totalPoints = collections.reduce((total, coll) => {
@@ -296,7 +299,7 @@ bot.on("photo", async (ctx) => {
     for (let i = 0; i < tags.length; i++) {
         const found = neaList.find((item) => item.name === tags[i].name)
         if (found) {
-            output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\nFor recycling guidelines please check /guidelines.`
+            output += `I think this is a <b>${found.name}</b>, it should be recycled as <b>${found.type}</b>. \r\n\r\nFor recycling guidelines please check \r\n/guidelines.`
             break
         }
     }

@@ -41,6 +41,9 @@ const collection = `Use the 'Book a Collection' button to start out app which wi
 
 Our team will be conducting door-to-door collection for your recycables. Let them know your collection Id to earn your points.`
 
+const about  = `Build by <a href="https://github.com/laughingkid-sg">@zhengteck</a> & <a href="https://github.com/KwanHW">@KwanHW</a> for
+<a href="https://devpost.com/software/earncycle">LifeHack 2022</a>`
+
 export {
     welcomeMsg,
     postalUpdated,
@@ -48,4 +51,5 @@ export {
     guidelienes,
     canRecycle,
     collection,
+    about
 }
